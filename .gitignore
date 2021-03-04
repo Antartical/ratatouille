@@ -33,6 +33,7 @@ reports/**
 
 # IDE
 .vscode
+junit
 
 # Installer logs
 pip-log.txt

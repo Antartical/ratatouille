@@ -22,7 +22,10 @@ local.test:
 	@docker exec ratatouille pytest --cov=ratatouille
 
 ci.test:
-	@docker exec ratatouille coverage run --source=ratatouille -m pytest
+	@docker exec ratatouille pytest --cov=ratatouille --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html
+	@docker cp $(shell docker-compose ps -q ratatouille):/app/junit ./junit
+	@docker cp $(shell docker-compose ps -q ratatouille):/app/htmlcov ./htmlcov
+	@docker cp $(shell docker-compose ps -q ratatouille):/app/coverage.xml ./coverage.xml
 
 logs:
 	@docker logs -f $(shell docker-compose ps -q ratatouille)
