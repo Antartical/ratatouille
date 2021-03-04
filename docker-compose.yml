@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  ##############################################################################
+  #                              Ratatouille                                   #
+  ##############################################################################
+  ratatouille:
+    build:
+      context: .
+      dockerfile: build/docker/dockerfile.local
+    container_name: ratatouille
+    command: "serve:watch"
+    volumes:
+      - ./ratatouille:/app/ratatouille
+    ports:
+      - "9400:9400"
+    env_file:
+      - ./build/env/.env
+    networks:
+      - ratatouille-network
+
+################################################################################
+#                                   NETWORKS                                   #
+################################################################################
+networks:
+  ratatouille-network:
+    driver: bridge
