@@ -2,8 +2,72 @@ version: "3"
 
 services:
   ##############################################################################
-  #                              Ratatouille                                   #
+  #                                DEPENDENCIES                                #
   ##############################################################################
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - ratatouille-network
+
+  pelipper:
+    image: ghcr.io/antartical/pelipper
+    container_name: pelipper
+    ports:
+      - "9000:9000"
+    environment:
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
+      - SMTP_USER=admin
+      - SMTP_PASSWORD=admin
+    networks:
+      - ratatouille-network
+
+  postgres:
+    image: postgres:13.1-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_MULTIPLE_DATABASES=frodo
+      - POSTGRES_EXTENSIONS=uuid-ossp
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./build/extra:/docker-entrypoint-initdb.d
+      - antartical.frodo:/var/lib/postgresql/data
+    networks:
+      - ratatouille-network
+
+  gandalf:
+    image: ghcr.io/antartical/gandalf
+    container_name: gandalf
+    ports:
+      - "9100:9100"
+    environment:
+      - ENVIRONMENT=docker
+      - JWT_TOKEN_TTL=60
+      - JWT_TOKEN_RTTL=1440
+      - JWT_TOKEN_KEY=mysupersecret
+      - PELIPPER_HOST=http://pelipper:9000
+      - PELIPPER_SMTP_ACCOUNT=accounts@antartical.com
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=frodo
+      - POSTGRES_DB_TEST=test
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+    networks:
+      - ratatouille-network
+
+  ################################################################################
+  #                                RATATOUILLE                                   #
+  ################################################################################
   ratatouille:
     build:
       context: .
@@ -25,3 +89,9 @@ services:
 networks:
   ratatouille-network:
     driver: bridge
+
+################################################################################
+#                                   VOLUMES                                    #
+################################################################################
+volumes:
+  antartical.frodo:

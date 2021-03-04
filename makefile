@@ -18,6 +18,12 @@ local.check.credentials:
 local.docker.login: local.check.credentials
 	@cat ~/.credentials/ghcr.token | docker login ghcr.io -u $(shell cat ~/.credentials/ghcr.name) --password-stdin
 
+local.test:
+	@docker exec ratatouille pytest --cov=ratatouille
+
+ci.test:
+	@docker exec ratatouille pytest --cov=ratatouille && coveralls
+
 logs:
 	@docker logs -f $(shell docker-compose ps -q ratatouille)
 
@@ -38,5 +44,7 @@ start: local.docker.login local.start
 stop: local.down
 
 renew: local.down local.build local.start
+
+ci_check_tests:ci.docker.login local.start ci.test
 
 .PHONY:  start stop renew sh logs docker_tag_and_push
