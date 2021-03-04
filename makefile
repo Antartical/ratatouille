@@ -26,7 +26,7 @@ ci.test:
 
 logs:
 	@docker logs -f $(shell docker-compose ps -q ratatouille)
-
+ 
 sh:
 	@docker exec -it ratatouille /bin/bash
 
