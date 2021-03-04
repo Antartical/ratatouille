@@ -6,7 +6,7 @@
 
 ## Ratatouille in a nutshell
 
-Ratatoille is ready to teach you how to cooking healthy. This service allow us
+Ratatouille is ready to teach you how to cooking healthy. This service allow us
 to perform our own recipes or explore new ones. Moreover this application lets
 you to contact with nutricionists in order to balance your diet.
 
