@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Antartical/ratatouille.svg?branch=main)](https://travis-ci.com/Antartical/ratatouille)
+[![Coverage Status](https://coveralls.io/repos/github/Antartical/ratatouille/badge.svg?branch=master)](https://coveralls.io/github/Antartical/ratatouille?branch=master)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
 <p align="center">

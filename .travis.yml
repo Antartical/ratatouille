@@ -1,0 +1,29 @@
+language: python
+python:
+  - 3.9
+
+branches:
+  only:
+    - master
+
+services:
+  - docker
+
+stages:
+  - Test
+  # - Github Packages Deploy
+
+jobs:
+  include:
+    - stage: Test
+      before_script:
+        - cp ./build/env/.env.sample ./build/env/.env
+        - pip install coveralls
+      script:
+        - make ci_check_tests
+        - coveralls
+
+    # - stage: Github Packages Deploy
+    #   if: (NOT type IN (pull_request)) AND (branch = master)
+    #   env: TAG=$(date +%d%m%Y%H%M%S)
+    #   script: make docker_tag_and_push

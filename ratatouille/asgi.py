@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware import cors
 from ratatouille import settings
+from ratatouille import router
 
 
 def make_app() -> FastAPI:
@@ -22,6 +23,9 @@ def make_app() -> FastAPI:
         allow_methods=['*'],
         allow_headers=['*']
     )
+
+    # Routes
+    router.register(app)
 
     return app
 
