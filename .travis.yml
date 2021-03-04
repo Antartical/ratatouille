@@ -21,7 +21,6 @@ jobs:
         - go get github.com/mattn/goveralls
       script:
         - make ci_check_tests
-        - $GOPATH/bin/goveralls -coverprofile=coverage.out -service=travis-ci
 
     # - stage: Github Packages Deploy
     #   if: (NOT type IN (pull_request)) AND (branch = master)

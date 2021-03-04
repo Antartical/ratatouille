@@ -22,7 +22,8 @@ local.test:
 	@docker exec ratatouille pytest --cov=ratatouille
 
 ci.test:
-	@docker exec ratatouille pytest --cov=ratatouille && coveralls
+	@docker exec ratatouille pytest --cov=ratatouille
+	@docker exec ratatouille coveralls
 
 logs:
 	@docker logs -f $(shell docker-compose ps -q ratatouille)
