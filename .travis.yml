@@ -21,7 +21,7 @@ jobs:
         - pip install coveralls
       script:
         - make ci_check_tests
-        - coveralls --data_file=.coverage
+        - coveralls
 
     # - stage: Github Packages Deploy
     #   if: (NOT type IN (pull_request)) AND (branch = master)
