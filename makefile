@@ -22,7 +22,7 @@ local.test:
 	@docker exec ratatouille pytest --cov=ratatouille
 
 ci.test:
-	@docker-compose run -v $(PWD):/coverage ratatouille coverage run --source=ratatouille -m pytest
+	@docker-compose run -v $(PWD):/app ratatouille pytest --cov-report= --cov=ratatouille ratatouille/
 
 logs:
 	@docker logs -f $(shell docker-compose ps -q ratatouille)
