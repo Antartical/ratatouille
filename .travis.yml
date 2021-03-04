@@ -18,9 +18,11 @@ jobs:
     - stage: Test
       before_script:
         - cp ./build/env/.env.sample ./build/env/.env
-        - go get github.com/mattn/goveralls
+        - pip install coveralls
       script:
         - make ci_check_tests
+        - docker cp "$(docker-compose ps -q ratatouille):/app/.coverage" ./.coverage
+        - coveralls
 
     # - stage: Github Packages Deploy
     #   if: (NOT type IN (pull_request)) AND (branch = master)
