@@ -76,6 +76,7 @@ services:
     command: "serve:watch"
     volumes:
       - ./ratatouille:/app/ratatouille
+      - ./pyproject.toml:/app/pyproject.toml
     ports:
       - "9400:9400"
     env_file:
