@@ -23,6 +23,9 @@ local.test:
 
 ci.test:
 	@docker-compose run -v $(PWD):/app ratatouille coverage run --source=ratatouille -m pytest
+	@mv .coverage .coverage-docker
+	@coverage combine -a .coverage-docker
+	@coverage report
 
 logs:
 	@docker logs -f $(shell docker-compose ps -q ratatouille)
