@@ -1,6 +1,16 @@
 #!make
 .DEFAULT_GOAL=start
 
+check_missing_migrations:
+	@$(eval TMP := $(shell docker exec -it ratatouille aerich migrate | sed -r "s/\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]//g"))
+	@if [ "$(TMP)" != "No changes detected" ]; then \
+    	echo "You have missing migrations!"; \
+		exit 1; \
+    fi
+
+migrate:
+	@docker exec ratatouille aerich upgrade
+
 local.build:
 	@docker-compose build
 
@@ -18,10 +28,11 @@ local.check.credentials:
 local.docker.login: local.check.credentials
 	@cat ~/.credentials/ghcr.token | docker login ghcr.io -u $(shell cat ~/.credentials/ghcr.name) --password-stdin
 
-local.test:
+local.test: check_missing_migrations
+	@docker exec ratatouille check_missing_migrations
 	@docker exec ratatouille pytest --cov=ratatouille
 
-ci.test:
+ci.test: check_missing_migrations
 	@docker-compose run -v $(PWD):/app ratatouille coverage run --source=ratatouille -m pytest
 	@mv .coverage .coverage-docker
 	@coverage combine -a .coverage-docker

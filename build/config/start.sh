@@ -16,10 +16,19 @@ check_service(){
     done
 }
 
+migrate(){
+    if ! [[ "$ENVIRONMENT" == "production" ]]; then
+        aerich upgrade;
+    fi
+}
+
 health_check(){
     check_service "$POSTGRES_HOST" "$POSTGRES_PORT" "$MAX_POSTGRES_RETRIES"
 }
 
+
+health_check
+migrate
 if [[ "$1" == "serve" ]]; then
     exec uvicorn ratatouille.asgi:app \
     --host 0.0.0.0 \

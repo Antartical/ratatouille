@@ -34,13 +34,21 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_MULTIPLE_DATABASES=frodo
+      - POSTGRES_MULTIPLE_DATABASES=paris,frodo,test
       - POSTGRES_EXTENSIONS=uuid-ossp
     ports:
       - "5432:5432"
     volumes:
       - ./build/extra:/docker-entrypoint-initdb.d
-      - antartical.frodo:/var/lib/postgresql/data
+      - antartical.paris:/var/lib/postgresql/data
+    networks:
+      - ratatouille-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
     networks:
       - ratatouille-network
 
@@ -76,6 +84,8 @@ services:
     command: "serve:watch"
     volumes:
       - ./ratatouille:/app/ratatouille
+      - ./aerich.ini:/app/aerich.ini
+      - ./migrations:/app/migrations
       - ./pyproject.toml:/app/pyproject.toml
     ports:
       - "9400:9400"
@@ -95,4 +105,4 @@ networks:
 #                                   VOLUMES                                    #
 ################################################################################
 volumes:
-  antartical.frodo:
+  antartical.paris:

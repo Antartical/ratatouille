@@ -27,7 +27,6 @@ get_env_prompt() {
   echo "$ENV_PROMPT"
 }
 
-
 PS1='🐳  \[\033[1;36m\]\h \[\033[1;34m\]\W\[\033[0;35m\] \[\033[1;36m\]# \[\033[0m\]'
 PS1="$(get_env_prompt) $PS1"
 

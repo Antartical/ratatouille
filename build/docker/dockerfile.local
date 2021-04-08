@@ -18,6 +18,7 @@ RUN apt-get update \
 
 COPY ./build/config/.bashrc /root/.bashrc
 COPY ./build/config/start.sh /bin/start.sh
+COPY ./build/config/shell.py /root/.ipython/profile_default/startup/init.py
 RUN chmod +x /bin/start.sh
 
 WORKDIR /app
