@@ -29,3 +29,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.paths]
 source = ["./ratatouille/", "/app/ratatouille/"]
+
+[tool.coverage.run]
+omit = ["./ratatouille/controllers/openapi.py"]
