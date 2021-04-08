@@ -29,7 +29,6 @@ local.docker.login: local.check.credentials
 	@cat ~/.credentials/ghcr.token | docker login ghcr.io -u $(shell cat ~/.credentials/ghcr.name) --password-stdin
 
 local.test: check_missing_migrations
-	@docker exec ratatouille check_missing_migrations
 	@docker exec ratatouille pytest --cov=ratatouille
 
 ci.test: check_missing_migrations
