@@ -3,8 +3,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 from ratatouille.models import User
-from ratatouille.security.auth import errors
-from ratatouille.security.auth import gandalf
+from ratatouille.vendors import gandalf
 
 
 authorization = OAuth2PasswordBearer('/login', auto_error=False)
@@ -26,7 +25,8 @@ async def get_current_user(
     if not authorization_token:
         return None
 
-    try:
-        return await gandalf.authenticate(authorization_token)
-    except errors.UserCredentialsError:
-        return None
+    gandalf_user = await gandalf.me(authorization_token)
+    return await User.get_or_create(
+        email=gandalf_user.email,
+        defaults=gandalf_user.dict(exclude={'email'})
+    )

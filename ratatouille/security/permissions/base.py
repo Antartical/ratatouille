@@ -6,7 +6,7 @@ from starlette import status
 from starlette.requests import Request
 
 from ratatouille.models import User
-from ratatouille.security.auth.helpers import get_current_user
+from ratatouille.security.auth import get_current_user
 
 
 class BasePermission(abc.ABC):
