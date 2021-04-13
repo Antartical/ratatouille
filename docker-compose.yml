@@ -34,13 +34,21 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_MULTIPLE_DATABASES=frodo
+      - POSTGRES_MULTIPLE_DATABASES=paris,frodo,test
       - POSTGRES_EXTENSIONS=uuid-ossp
     ports:
       - "5432:5432"
     volumes:
-      - ./build/extra:/docker-entrypoint-initdb.d
-      - antartical.frodo:/var/lib/postgresql/data
+      - ./build/extra/postgres:/docker-entrypoint-initdb.d
+      - antartical.paris:/var/lib/postgresql/data
+    networks:
+      - ratatouille-network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
     networks:
       - ratatouille-network
 
@@ -49,6 +57,8 @@ services:
     container_name: gandalf
     ports:
       - "9100:9100"
+    volumes:
+      - ./build/extra/gandalf:/docker-entrypoint-initdb.d
     environment:
       - ENVIRONMENT=docker
       - JWT_TOKEN_TTL=60
@@ -62,6 +72,8 @@ services:
       - POSTGRES_DB_TEST=test
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
+      - USER_EMAIL=test@test.com
+      - USER_PASSWORD=testtesttest
     networks:
       - ratatouille-network
 
@@ -76,6 +88,8 @@ services:
     command: "serve:watch"
     volumes:
       - ./ratatouille:/app/ratatouille
+      - ./aerich.ini:/app/aerich.ini
+      - ./migrations:/app/migrations
       - ./pyproject.toml:/app/pyproject.toml
     ports:
       - "9400:9400"
@@ -95,4 +109,4 @@ networks:
 #                                   VOLUMES                                    #
 ################################################################################
 volumes:
-  antartical.frodo:
+  antartical.paris:

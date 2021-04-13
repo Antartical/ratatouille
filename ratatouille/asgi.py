@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware import cors
+from tortoise.contrib.fastapi import register_tortoise
+
 from ratatouille import settings
 from ratatouille import router
 
@@ -15,6 +17,9 @@ def make_app() -> FastAPI:
         version=settings.VERSION,
         debug=settings.DEBUG
     )
+
+    # Database
+    register_tortoise(app, config=settings.DATABASES)
 
     # Middlewares
     app.add_middleware(
