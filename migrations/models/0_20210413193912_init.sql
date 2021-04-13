@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     "uuid" UUID NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
     "modified_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-    "email" VARCHAR(244),
+    "email" VARCHAR(244)  UNIQUE,
     "name" VARCHAR(50) NOT NULL,
     "surname" VARCHAR(50) NOT NULL,
     "birthday" DATE NOT NULL,

@@ -7,7 +7,7 @@ from ratatouille.common import models
 class User(models.UUIDTimestampedModel):
     """User model"""
 
-    email = fields.CharField(max_length=244, null=True)
+    email = fields.CharField(max_length=244, null=True, unique=True)
     name = fields.CharField(max_length=50)
     surname = fields.CharField(max_length=50)
     birthday = fields.DateField()
