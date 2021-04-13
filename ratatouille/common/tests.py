@@ -25,18 +25,16 @@ def auto_inject_fixtures(*names):
     return partial(_inject, names=names)
 
 
-def transaction():
-    def wrapper(func):
-        @wraps(func)
-        async def wrapped(*args):
-            try:
-                async with tortoise.transactions.in_transaction():
-                    result = await func(*args)
-                    raise tortoise.exceptions.TransactionManagementError()
-            except Exception:
-                return result
-        return wrapped
-    return wrapper
+def db_test(func):
+    @wraps(func)
+    async def wrapped(*args):
+        try:
+            async with tortoise.transactions.in_transaction():
+                result = await func(*args)
+                raise tortoise.exceptions.TransactionManagementError()
+        except Exception:
+            return result
+    return wrapped
 
 
 class AsyncRatatouilleTestCase(unittest.IsolatedAsyncioTestCase):

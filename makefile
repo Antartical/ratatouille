@@ -28,10 +28,10 @@ local.check.credentials:
 local.docker.login: local.check.credentials
 	@cat ~/.credentials/ghcr.token | docker login ghcr.io -u $(shell cat ~/.credentials/ghcr.name) --password-stdin
 
-local.test: check_missing_migrations
+local.test:
 	@docker exec ratatouille pytest --cov=ratatouille
 
-ci.test: check_missing_migrations
+ci.test:
 	@docker-compose run -v $(PWD):/app ratatouille coverage run --source=ratatouille -m pytest
 	@mv .coverage .coverage-docker
 	@coverage combine -a .coverage-docker

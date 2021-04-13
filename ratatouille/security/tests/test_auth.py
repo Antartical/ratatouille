@@ -1,14 +1,26 @@
 from unittest import mock
 
-from ratatouille.common.tests import AsyncRatatouilleTestCase, transaction
+from ratatouille.common.tests import AsyncRatatouilleTestCase, db_test
 from ratatouille.security import auth
 
 
 class TestGetCurrentUser(AsyncRatatouilleTestCase):
     """Test get current user dependency."""
 
-    @transaction()
     async def test_get_user_no_token(self):
+        self.assertIsNone(await auth.get_current_user(''))
+
+    async def test_get_user_none_wrong_credential(self):
+        access_token = 'test'
+        with mock.patch(
+            'ratatouille.vendors.gandalf.me',
+            side_effect=mock.AsyncMock(side_effect=auth.gandalf.GandalfError)
+        ) as mocked_gandalf_me:
+            self.assertIsNone(await auth.get_current_user(access_token))
+            mocked_gandalf_me.assert_called_once_with(access_token)
+
+    @db_test
+    async def test_get_user_success(self):
         access_token = 'test'
         mocked_gandalf_user = auth.gandalf.GandalfUser(
             email='test@example.com',
@@ -29,9 +41,3 @@ class TestGetCurrentUser(AsyncRatatouilleTestCase):
         self.assertEqual(user.surname, mocked_gandalf_user.surname)
         self.assertEqual(user.birthday, mocked_gandalf_user.birthday)
         self.assertEqual(user.phone, mocked_gandalf_user.phone)
-
-    async def test_get_user_none_wrong_credential(self):
-        pass
-
-    async def test_get_user_success(self):
-        pass
