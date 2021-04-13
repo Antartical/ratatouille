@@ -1,14 +1,11 @@
-import pytest
-from unittest import TestCase
+from ratatouille.common.tests import AsyncRatatouilleTestCase
 
 
-class TestPermissionRunner(TestCase):
+class TestPermissionRunner(AsyncRatatouilleTestCase):
     """Permission runner tests"""
 
-    @pytest.mark.asyncio
     async def test_permissions_success(self):
         pass
 
-    @pytest.mark.asyncio
     async def test_permissions_error(self):
         pass

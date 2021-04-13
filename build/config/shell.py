@@ -6,19 +6,27 @@ ipython shell.
 """
 
 
-import atexit
-import asyncio
-from tortoise import Tortoise
-
-from ratatouille import settings
-from ratatouille.models import *
+import sys
 
 
-def on_shutdown():
-    Tortoise.close_connections()
+def debugger_is_active() -> bool:
+    """Return if the debugger is currently active"""
+    gettrace = getattr(sys, 'gettrace', lambda: None)
+    return gettrace() is not None
 
 
-atexit.register(on_shutdown)
+if not debugger_is_active():
+    import atexit
+    import asyncio
+    from tortoise import Tortoise
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(Tortoise.init(config=settings.DATABASES))
+    from ratatouille import settings
+    from ratatouille.models import *
+
+    await def on_shutdown():
+        Tortoise.close_connections()
+
+    atexit.register(on_shutdown)
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(Tortoise.init(config=settings.DATABASES))

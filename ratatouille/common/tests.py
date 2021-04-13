@@ -2,10 +2,12 @@ import json
 import typing
 import unittest
 import pytest
-from functools import partial
+import tortoise
+from functools import partial, wraps
 from fastapi.testclient import TestClient
 from pytest_httpx import HTTPXMock
 
+from ratatouille import settings
 from ratatouille.asgi import app
 
 
@@ -23,15 +25,43 @@ def auto_inject_fixtures(*names):
     return partial(_inject, names=names)
 
 
-class APITestCase(unittest.TestCase):
+def transaction():
+    def wrapper(func):
+        @wraps(func)
+        async def wrapped(*args):
+            try:
+                async with tortoise.transactions.in_transaction():
+                    result = await func(*args)
+                    raise tortoise.exceptions.TransactionManagementError()
+            except Exception:
+                return result
+        return wrapped
+    return wrapper
+
+
+class AsyncRatatouilleTestCase(unittest.IsolatedAsyncioTestCase):
+    """TestCase class for Testing with bd rollback transacions."""
+
+    async def asyncSetUp(self):
+        await tortoise.Tortoise.init(config=settings.TEST_DATABASES)
+        await tortoise.Tortoise.generate_schemas()
+
+    async def asyncTearDown(self):
+        await tortoise.Tortoise.close_connections()
+
+
+class AsyncAPITestCase(AsyncRatatouilleTestCase):
     """TestCase class for API testing."""
 
-    def setUp(self):
+    client: TestClient
+
+    async def asyncSetUp(self):
+        await super().asyncSetUp()
         self.client = TestClient(app)
 
 
 @auto_inject_fixtures('httpx_mock')
-class AsyncHTTPXTestCase(unittest.IsolatedAsyncioTestCase):
+class AsyncHTTPXTestCase(AsyncRatatouilleTestCase):
     """TestCase class for async httpx testing."""
 
     httpx_mock: HTTPXMock

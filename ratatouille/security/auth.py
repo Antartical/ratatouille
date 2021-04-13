@@ -25,8 +25,12 @@ async def get_current_user(
     if not authorization_token:
         return None
 
-    gandalf_user = await gandalf.me(authorization_token)
-    return await User.get_or_create(
-        email=gandalf_user.email,
-        defaults=gandalf_user.dict(exclude={'email'})
-    )
+    try:
+        gandalf_user = await gandalf.me(authorization_token)
+        user, _ = await User.get_or_create(
+            email=gandalf_user.email,
+            defaults=gandalf_user.dict(exclude={'email'})
+        )
+        return user
+    except gandalf.GandalfError:
+        return None

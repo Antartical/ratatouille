@@ -20,6 +20,16 @@ DATABASES = {
                 'password': os.getenv('POSTGRES_PASSWORD'),
                 'database': os.getenv('POSTGRES_DB'),
             },
+        },
+        'test': {
+            'engine': 'tortoise.backends.asyncpg',
+            'credentials': {
+                'host': os.getenv('POSTGRES_HOST'),
+                'port': os.getenv('POSTGRES_PORT'),
+                'user': os.getenv('POSTGRES_USER'),
+                'password': os.getenv('POSTGRES_PASSWORD'),
+                'database': os.getenv('POSTGRES_DB_TEST'),
+            }
         }
     },
     'apps': {
@@ -27,7 +37,28 @@ DATABASES = {
             'models': ['aerich.models', 'ratatouille.models'],
             'default_connection': 'default',
         }
+    }
+}
+
+TEST_DATABASES = {
+    'connections': {
+        'default': {
+            'engine': 'tortoise.backends.asyncpg',
+            'credentials': {
+                'host': os.getenv('POSTGRES_HOST'),
+                'port': os.getenv('POSTGRES_PORT'),
+                'user': os.getenv('POSTGRES_USER'),
+                'password': os.getenv('POSTGRES_PASSWORD'),
+                'database': os.getenv('POSTGRES_DB_TEST'),
+            },
+        }
     },
+    'apps': {
+        'models': {
+            'models': ['aerich.models', 'ratatouille.models'],
+            'default_connection': 'default',
+        }
+    }
 }
 
 

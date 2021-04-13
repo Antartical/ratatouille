@@ -1,10 +1,8 @@
-import pytest
-from unittest import TestCase
+from ratatouille.common.tests import AsyncRatatouilleTestCase
 
 
-class TestRequireDependency(TestCase):
+class TestRequireDependency(AsyncRatatouilleTestCase):
     """Require depencency test"""
 
-    @pytest.mark.asyncio
     async def test_wraps_permissions_runner_dependency(self):
         pass

@@ -1,7 +1,7 @@
-from ratatouille.common.tests import APITestCase
+from ratatouille.common.tests import AsyncAPITestCase
 
 
-class TestPingRoute(APITestCase):
+class TestPingRoute(AsyncAPITestCase):
     """Tests for ping route."""
 
     def test_ping(self):
