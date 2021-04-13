@@ -23,8 +23,9 @@ if not debugger_is_active():
     from ratatouille import settings
     from ratatouille.models import *
 
-    await def on_shutdown():
-        Tortoise.close_connections()
+    def on_shutdown():
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(Tortoise.close_connections())
 
     atexit.register(on_shutdown)
 

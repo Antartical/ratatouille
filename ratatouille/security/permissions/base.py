@@ -27,7 +27,6 @@ class BasePermission(abc.ABC):
           Tuple[bool, Optional[str]: if user are authorized and a msg explained
           why he has not got access.
         """
-        pass
 
 
 class PermissionRunner:

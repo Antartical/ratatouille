@@ -26,6 +26,7 @@ coveralls = "^3.0.1"
 pytest-cov = "^2.11.1"
 pytest-httpx = "^0.11.0"
 ipdb = "^0.13.7"
+Faker = "^8.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -38,4 +39,4 @@ addopts = "-s"
 source = ["./ratatouille/", "/app/ratatouille/"]
 
 [tool.coverage.run]
-omit = ["./ratatouille/controllers/openapi.py"]
+omit = ["./ratatouille/controllers/openapi.py", "ratatouille/models/factories"]
