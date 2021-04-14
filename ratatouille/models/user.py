@@ -29,3 +29,4 @@ class User(models.UUIDTimestampedModel, models.IndexedModel):
 
 
 PUser = pydantic_model_creator(User, name='User')
+EUser = pydantic_model_creator(User, name='UserSearchResult')

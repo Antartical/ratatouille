@@ -19,10 +19,58 @@ class ESIndex:
         indexed_fields = []
 
     @classmethod
-    def search(cls) -> elasticsearch_dsl.Search:
+    def _search(cls) -> elasticsearch_dsl.Search:
         return cls.Document.search()
 
-    @property
+    @classmethod
+    def search(
+        cls, query, offset=0, limit=30
+    ) -> elasticsearch_dsl.response.Response:
+        """Multi match search for the given query.
+
+        Args:
+            query (str): query string. It can contains wildcards.
+            offset (int, optional): offset. Defaults to 0.
+            limit (int, optional): limit results. Defaults to 30.
+
+        Returns:
+            elasticsearch_dsl.response.Response: elasticsearch response with
+                matched hits.
+        """
+        return cls._search()[offset:limit+offset].query(
+            'query_string', query=query, fields=cls.Meta.indexed_fields
+        ).execute()
+
+    @classmethod
+    def match(
+        cls, attr: str, query: str, offset=0, limit=30
+    ) -> elasticsearch_dsl.response.Response:
+        """Match exact query for the given attribute name.
+
+        Args:
+            attr (str): attr name.
+            query (str): query string. It cannot contains wildcards.
+            offset (int, optional): offset. Defaults to 0.
+            limit (int, optional): limit results. Defaults to 30.
+
+        Returns:
+            elasticsearch_dsl.response.Response: [description]
+        """
+        return cls._search()[offset:limit+offset].query(
+            'match', **{attr: query}
+        ).execute()
+
+    @ classmethod
+    def destroy_index(cls) -> typing.Dict:
+        """Removes the whole index and data."""
+        return cls.Document._index.delete(ignore=404)
+
+    @ classmethod
+    def build_index(cls):
+        """Builds the index if it has not been created before."""
+        cls.Document.init()
+
+    @ property
     def _get_doc_instance(self) -> typing.Optional[elasticsearch_dsl.Document]:
         if self._index_id:
             return self.Document.get(id=self._index_id)
@@ -44,13 +92,3 @@ class ESIndex:
             doc = self.Document(**data)
             doc.save()
         return doc.meta['id']
-
-    @classmethod
-    def destroy_index(cls) -> typing.Dict:
-        """Removes the whole index and data."""
-        return cls.Document._index.delete(ignore=404)
-
-    @classmethod
-    def build_index(cls):
-        """Builds the index if it has not been created before."""
-        cls.Document.init()
