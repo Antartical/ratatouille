@@ -1,3 +1,4 @@
+import elasticsearch_dsl
 from fastapi import FastAPI
 from fastapi.middleware import cors
 from tortoise.contrib.fastapi import register_tortoise
@@ -20,6 +21,7 @@ def make_app() -> FastAPI:
 
     # Database
     register_tortoise(app, config=settings.DATABASES)
+    elasticsearch_dsl.connections.configure(**settings.ELASTICSEARCH_DSL)
 
     # Middlewares
     app.add_middleware(

@@ -5,6 +5,25 @@ services:
   #                                DEPENDENCIES                                #
   ##############################################################################
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: bluebox.elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - ratatouille-network
+
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
@@ -110,3 +129,5 @@ networks:
 ################################################################################
 volumes:
   antartical.paris:
+  data01:
+    driver: local
