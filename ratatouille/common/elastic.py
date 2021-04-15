@@ -24,12 +24,19 @@ class ESIndex:
 
     @classmethod
     def es_search(
-        cls: typing.Type[MODEL], query: str, offset=0, limit=30
+        cls: typing.Type[MODEL],
+        query: str,
+        fields: typing.Optional[typing.List[str]] = None,
+        offset=0,
+        limit=30
     ) -> elasticsearch_dsl.response.Response:
         """Multi match search for the given query.
 
         Args:
             query (str): query string. It can contains wildcards.
+            fields (List[str], optional): the fields the search will be
+                executed for, if it is none the search will be executed over
+                all indexed fields. Defaults to None
             offset (int, optional): offset. Defaults to 0.
             limit (int, optional): limit results. Defaults to 30.
 
@@ -37,7 +44,7 @@ class ESIndex:
             elasticsearch_dsl.response.Response: elasticsearch response with
                 matched hits.
         """
-        fields = getattr(cls.Meta, 'es_search_fields', [])
+        fields = fields or []
         return cls._search()[offset:limit+offset].query(
             'query_string', query=query, fields=fields
         ).execute()
