@@ -29,6 +29,7 @@ if not debugger_is_active():
     def on_shutdown():
         loop = asyncio.get_event_loop()
         loop.run_until_complete(Tortoise.close_connections())
+        loop.close()
 
     atexit.register(on_shutdown)
 

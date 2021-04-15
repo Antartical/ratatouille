@@ -24,9 +24,11 @@ COPY ./build/config/shell.py /root/.ipython/profile_default/startup/init.py
 RUN chmod +x /bin/start.sh
 
 WORKDIR /app
+COPY ./manage.py manage.py
 COPY ./pyproject.toml pyproject.toml
 COPY ./poetry.lock poetry.lock
 COPY ./ratatouille /ratatouille
+COPY ./cli /cli
 RUN poetry install
 
 EXPOSE 9400

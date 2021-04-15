@@ -107,9 +107,11 @@ services:
     command: "serve:watch"
     volumes:
       - ./ratatouille:/app/ratatouille
+      - ./cli:/app/cli
       - ./aerich.ini:/app/aerich.ini
       - ./migrations:/app/migrations
       - ./pyproject.toml:/app/pyproject.toml
+      - ./manage.py:/app/manage.py
     ports:
       - "9400:9400"
     env_file:

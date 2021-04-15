@@ -22,33 +22,12 @@ MODEL = typing.TypeVar("MODEL", bound="Model")
 
 
 class IndexedModel(models.Model, ESIndex):
-    """IndexedModel.
-
-    This model will index the document into elastic for search queries.
-    """
+    """IndexedModel."""
 
     _index_id = fields.CharField(max_length=255, null=True, unique=True)
 
     @classmethod
-    async def rebuild_index(cls):
-        logging.info(f'Rebuild index {cls.Document.Index.name}')
-        cls.destroy_index()
-        cls.build_index()
-
-        total_objects = await cls.all().count()
-        count = 0
-        async for obj in cls.all():
-            obj._index_id = None
-            obj._index_id = obj.index()
-            await obj.save(update_fields=['_index_id'])
-            count += 1
-            if count % 500 == 0:
-                logging.info(f' Indexed: {count} of {total_objects}')
-
-        logging.info(f'Indexed {cls.Document.Index.name} successfully rebuild')
-
-    @classmethod
-    def _covert_es_response_to_queryset(
+    def _convert_es_response_to_queryset(
         cls: typing.Type[MODEL],
         es_response: elasticsearch_dsl.response.Response
     ) -> QuerySet[MODEL]:
@@ -66,7 +45,11 @@ class IndexedModel(models.Model, ESIndex):
 
     @classmethod
     def search(
-        cls: typing.Type[MODEL], query: str, offset=0, limit=30
+        cls: typing.Type[MODEL],
+        query: str,
+        fields: typing.Optional[typing.List[str]] = None,
+        offset: int = 0,
+        limit: int = 30
     ) -> QuerySet[MODEL]:
         """Multi match search for the given query.
 
@@ -75,19 +58,26 @@ class IndexedModel(models.Model, ESIndex):
 
         Args:
             query (str): es query string. It can contains wildcards.
+            fields (List[str], optional): the fields the search will be
+                executed for, if it is none the search will be executed over
+                all indexed fields. Defaults to None
             offset (int, optional): offset. Defaults to 0.
             limit (int, optional): limit results. Defaults to 30.
 
         Returns:
             Queryset[MODEL]: a queryset with the matched records.
         """
-        return cls._covert_es_response_to_queryset(
+        return cls._convert_es_response_to_queryset(
             cls.es_search(query, offset, limit)
         )
 
     @classmethod
     def match(
-        cls: typing.Type[MODEL], attr: str, query: str, offset=0, limit=30
+        cls: typing.Type[MODEL],
+        query: str,
+        field: str,
+        offset: int = 0,
+        limit: int = 30
     ) -> QuerySet[MODEL]:
         """Match exact query for the given attribute name.
 
@@ -95,16 +85,16 @@ class IndexedModel(models.Model, ESIndex):
         from the tortoise database by querying their ids.
 
         Args:
-            attr (str): attr name.
             query (str): query string. It cannot contains wildcards.
+            field (str): attr name.
             offset (int, optional): offset. Defaults to 0.
             limit (int, optional): limit results. Defaults to 30.
 
         Returns:
             Queryset[MODEL]: a queryset with the matched records.
         """
-        return cls._covert_es_response_to_queryset(
-            cls.es_match(attr, query, offset, limit)
+        return cls._convert_es_response_to_queryset(
+            cls.es_match(field, query, offset, limit)
         )
 
     async def save(self, *args, **kwargs):
