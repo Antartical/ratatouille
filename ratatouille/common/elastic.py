@@ -61,12 +61,12 @@ class ESIndex:
             'match', **{attr: query}
         ).execute()
 
-    @ classmethod
+    @classmethod
     def destroy_index(cls: typing.Type[MODEL]) -> typing.Dict:
         """Removes the whole index and data."""
         return cls.Document._index.delete(ignore=404)
 
-    @ classmethod
+    @classmethod
     def build_index(cls: typing.Type[MODEL]):
         """Builds the index if it has not been created before."""
         cls.Document.init()
