@@ -2,6 +2,9 @@ import typing
 import elasticsearch_dsl
 
 
+MODEL = typing.TypeVar("MODEL", bound="Model")
+
+
 class DocumentError(Exception):
     """
     This exception will be raised whether there are more
@@ -15,16 +18,13 @@ class ESIndex:
     Document: elasticsearch_dsl.Document
     _index_id: str
 
-    class Meta:
-        indexed_fields = []
-
     @classmethod
-    def _search(cls) -> elasticsearch_dsl.Search:
+    def _search(cls: typing.Type[MODEL]) -> elasticsearch_dsl.Search:
         return cls.Document.search()
 
     @classmethod
-    def search(
-        cls, query, offset=0, limit=30
+    def es_search(
+        cls: typing.Type[MODEL], query: str, offset=0, limit=30
     ) -> elasticsearch_dsl.response.Response:
         """Multi match search for the given query.
 
@@ -37,13 +37,14 @@ class ESIndex:
             elasticsearch_dsl.response.Response: elasticsearch response with
                 matched hits.
         """
+        fields = getattr(cls.Meta, 'es_search_fields', [])
         return cls._search()[offset:limit+offset].query(
-            'query_string', query=query, fields=cls.Meta.indexed_fields
+            'query_string', query=query, fields=fields
         ).execute()
 
     @classmethod
-    def match(
-        cls, attr: str, query: str, offset=0, limit=30
+    def es_match(
+        cls: typing.Type[MODEL], attr: str, query: str, offset=0, limit=30
     ) -> elasticsearch_dsl.response.Response:
         """Match exact query for the given attribute name.
 
@@ -61,20 +62,32 @@ class ESIndex:
         ).execute()
 
     @ classmethod
-    def destroy_index(cls) -> typing.Dict:
+    def destroy_index(cls: typing.Type[MODEL]) -> typing.Dict:
         """Removes the whole index and data."""
         return cls.Document._index.delete(ignore=404)
 
     @ classmethod
-    def build_index(cls):
+    def build_index(cls: typing.Type[MODEL]):
         """Builds the index if it has not been created before."""
         cls.Document.init()
 
-    @ property
+    @property
     def _get_doc_instance(self) -> typing.Optional[elasticsearch_dsl.Document]:
         if self._index_id:
             return self.Document.get(id=self._index_id)
         return None
+
+    def prepare(self) -> typing.Dict:
+        """Prepare the data to be indexed in the model.
+
+        This method should return a dict with the keys and values of the fields
+        the document will index.
+
+        Returns:
+            typing.Dict: the thada will be indexed by the document
+        """
+        raise NotImplementedError(
+            'You need to prepare your model for indexing')
 
     def index(self) -> str:
         """Index the model into elastic.
@@ -82,13 +95,9 @@ class ESIndex:
         Returns:
           str: the id index of the indexed document
         """
-        data = {attr: getattr(self, attr) for attr in self.Meta.indexed_fields}
         if doc := self._get_doc_instance:
-            doc = self._get_doc_instance
-            for attr in self.Meta.indexed_fields:
-                setattr(doc, attr, getattr(self, attr))
-            doc.update(**data)
+            doc.update(**self.prepare())
         else:
-            doc = self.Document(**data)
+            doc = self.Document(**self.prepare())
             doc.save()
         return doc.meta['id']
