@@ -1,6 +1,6 @@
 from unittest import mock
 
-from ratatouille.common.tests import AsyncRatatouilleTestCase, db_test
+from ratatouille.common.test import AsyncRatatouilleTestCase, db_test
 from ratatouille.security import auth
 
 

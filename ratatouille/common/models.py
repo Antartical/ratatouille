@@ -68,7 +68,7 @@ class IndexedModel(models.Model, ESIndex):
             Queryset[MODEL]: a queryset with the matched records.
         """
         return cls._convert_es_response_to_queryset(
-            cls.es_search(query, offset, limit)
+            cls.es_search(query, fields, offset, limit)
         )
 
     @classmethod
@@ -98,7 +98,8 @@ class IndexedModel(models.Model, ESIndex):
         )
 
     async def save(self, *args, **kwargs):
-        self._index_id = self.index()
+        if '_index_id' not in kwargs.get('update_fields', []):
+            self._index_id = self.index()
         await super().save(*args, **kwargs)
 
     class Meta:

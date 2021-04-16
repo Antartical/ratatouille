@@ -84,7 +84,8 @@ class ESIndex:
             return self.Document.get(id=self._index_id)
         return None
 
-    def prepare(self) -> typing.Dict:
+    @property
+    def to_document(self) -> typing.Dict:
         """Prepare the data to be indexed in the model.
 
         This method should return a dict with the keys and values of the fields
@@ -103,8 +104,8 @@ class ESIndex:
           str: the id index of the indexed document
         """
         if doc := self._get_doc_instance:
-            doc.update(**self.prepare())
+            doc.update(**self.to_document)
         else:
-            doc = self.Document(**self.prepare())
+            doc = self.Document(**self.to_document)
             doc.save()
         return doc.meta['id']

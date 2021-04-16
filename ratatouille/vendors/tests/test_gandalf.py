@@ -1,6 +1,6 @@
 import dateutil.parser
 
-from ratatouille.common.tests import AsyncHTTPXTestCase
+from ratatouille.common.test import AsyncHTTPXTestCase
 from ratatouille.vendors import gandalf
 
 

@@ -19,6 +19,7 @@ check_service(){
 migrate(){
     if ! [[ "$ENVIRONMENT" == "production" ]]; then
         aerich upgrade;
+        python manage.py elastic build;
     fi
 }
 

@@ -24,7 +24,8 @@ class User(models.UUIDTimestampedModel, models.IndexedModel):
         class Index:
             name = 'user'
 
-    def prepare(self) -> typing.Dict:
+    @property
+    def to_document(self) -> typing.Dict:
         """Return dict with the data that will be indexed"""
         return {
             'id': self.id,

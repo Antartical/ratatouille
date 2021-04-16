@@ -13,6 +13,34 @@ app = typer.Typer()
 
 @app.command()
 @with_initialize_connections
+async def build(models: str = ''):
+    """Init elastic indexes."""
+    if not models:
+        models = ratatouille_models.__all__
+    else:
+        models = models.split(',')
+
+    errors = []
+
+    with tqdm(total=len(models)) as pbar:
+        pbar.set_description(Fore.GREEN + 'Build indexes')
+        for model in models:
+            cls = getattr(ratatouille_models, model, None)
+            if not cls or not getattr(cls, 'Document', None):
+                errors.append(
+                    Fore.YELLOW + f"Model {model} does not exists."
+                )
+                pbar.update()
+                continue
+            cls.build_index()
+            pbar.update()
+
+    for error in errors:
+        typer.echo(error)
+
+
+@app.command()
+@with_initialize_connections
 async def rebuild(models: str = ''):
     "Rebuild elastic index and fill them again."""
     if not models:
