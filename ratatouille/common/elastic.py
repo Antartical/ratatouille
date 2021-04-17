@@ -5,13 +5,6 @@ import elasticsearch_dsl
 MODEL = typing.TypeVar("MODEL", bound="Model")
 
 
-class DocumentError(Exception):
-    """
-    This exception will be raised whether there are more
-    than one matched doc.
-    """
-
-
 class ESIndex:
     """Baseclass for indexed models."""
 
@@ -94,8 +87,6 @@ class ESIndex:
         Returns:
             typing.Dict: the thada will be indexed by the document
         """
-        raise NotImplementedError(
-            'You need to prepare your model for indexing')
 
     def index(self) -> str:
         """Index the model into elastic.
@@ -109,3 +100,8 @@ class ESIndex:
             doc = self.Document(**self.to_document)
             doc.save()
         return doc.meta['id']
+
+    def unindex(self):
+        """Removes the model from elastic."""
+        if doc := self._get_doc_instance:
+            doc.delete()

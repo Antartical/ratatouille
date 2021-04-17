@@ -23,6 +23,7 @@ elasticsearch-dsl = "^7.3.0"
 typer = "^0.3.2"
 colorama = "^0.4.4"
 tqdm = "^4.60.0"
+requests = "^2.25.1"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.5"
