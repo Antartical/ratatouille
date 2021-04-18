@@ -28,7 +28,19 @@ local.check.credentials:
 local.docker.login: local.check.credentials
 	@cat ~/.credentials/ghcr.token | docker login ghcr.io -u $(shell cat ~/.credentials/ghcr.name) --password-stdin
 
-local.test:
+
+local.reset.test_db:
+	@echo "============================"
+	@echo "= Setting up test database ="
+	@echo "============================"
+	@docker exec postgres.antartical psql -U root -d postgres -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'test' AND pid <> pg_backend_pid();" >> /dev/null
+	@docker exec postgres.antartical psql -U root -d postgres -c "DROP DATABASE IF EXISTS test;" >> /dev/null
+	@docker exec postgres.antartical psql -U root -d postgres -c "CREATE DATABASE test;" >> /dev/null
+	@docker exec postgres.antartical psql -U root -d postgres -d test -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'>> /dev/null
+	@echo "-> Test database created <-"
+
+
+local.test: local.reset.test_db
 	@docker exec ratatouille pytest --cov=ratatouille
 
 ci.test:

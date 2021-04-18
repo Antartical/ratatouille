@@ -3,6 +3,7 @@
 set -e
 
 MAX_POSTGRES_RETRIES=60
+MAX_ELASTICSEARCH_RETRIES=60
 
 check_service(){
     counter=1
@@ -19,11 +20,13 @@ check_service(){
 migrate(){
     if ! [[ "$ENVIRONMENT" == "production" ]]; then
         aerich upgrade;
+        python manage.py elastic build;
     fi
 }
 
 health_check(){
     check_service "$POSTGRES_HOST" "$POSTGRES_PORT" "$MAX_POSTGRES_RETRIES"
+    check_service "$ELASTICSEARCH_HOST" "$ELASTICSEARCH_PORT" "$MAX_ELASTICSEARCH_RETRIES"
 }
 
 

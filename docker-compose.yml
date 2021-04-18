@@ -5,6 +5,43 @@ services:
   #                                DEPENDENCIES                                #
   ##############################################################################
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - ratatouille-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    container_name: kibana
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_URL: http://elasticsearch:9200/
+    ports:
+      - 5601:5601
+    ulimits:
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+    networks:
+      - ratatouille-network
+
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
@@ -29,7 +66,7 @@ services:
 
   postgres:
     image: postgres:13.1-alpine
-    container_name: postgres
+    container_name: postgres.antartical
     restart: always
     environment:
       - POSTGRES_USER=root
@@ -88,9 +125,11 @@ services:
     command: "serve:watch"
     volumes:
       - ./ratatouille:/app/ratatouille
+      - ./cli:/app/cli
       - ./aerich.ini:/app/aerich.ini
       - ./migrations:/app/migrations
       - ./pyproject.toml:/app/pyproject.toml
+      - ./manage.py:/app/manage.py
     ports:
       - "9400:9400"
     env_file:
@@ -110,3 +149,5 @@ networks:
 ################################################################################
 volumes:
   antartical.paris:
+  data01:
+    driver: local

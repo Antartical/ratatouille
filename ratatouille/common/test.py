@@ -3,6 +3,7 @@ import typing
 import unittest
 import pytest
 import tortoise
+import elasticsearch_dsl
 from functools import partial, wraps
 from fastapi.testclient import TestClient
 from pytest_httpx import HTTPXMock
@@ -28,11 +29,12 @@ def auto_inject_fixtures(*names):
 def db_test(func):
     @wraps(func)
     async def wrapped(*args):
+        result = None
         try:
             async with tortoise.transactions.in_transaction():
                 result = await func(*args)
                 raise tortoise.exceptions.TransactionManagementError()
-        except Exception:
+        except tortoise.exceptions.TransactionManagementError:
             return result
     return wrapped
 
@@ -43,6 +45,7 @@ class AsyncRatatouilleTestCase(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         await tortoise.Tortoise.init(config=settings.TEST_DATABASES)
         await tortoise.Tortoise.generate_schemas()
+        elasticsearch_dsl.connections.configure(**settings.ELASTICSEARCH_DSL)
 
     async def asyncTearDown(self):
         await tortoise.Tortoise.close_connections()
