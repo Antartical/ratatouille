@@ -70,6 +70,6 @@ stop: local.down
 
 renew: local.down local.build local.start
 
-ci_check_tests:ci.docker.login local.start ci.test
+ci_check_tests:ci.docker.login local.start check_missing_migrations ci.test
 
 .PHONY:  start stop renew sh logs docker_tag_and_push
