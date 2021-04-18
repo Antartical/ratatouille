@@ -43,7 +43,7 @@ async def build(models: str = ''):
                 errors.append(
                     Fore.YELLOW + f'Exception on build index for {model}'
                 )
-                retries.append[cls]
+                retries.append[model]
             pbar.update()
 
     for error in errors:
@@ -54,12 +54,13 @@ async def build(models: str = ''):
         with tqdm(total=len(models)) as pbar:
             pbar.set_description(Fore.GREEN + 'Retrying build failed indexes')
             for model in retries:
+                cls = getattr(ratatouille_models, model, None)
                 try:
-                    model.build_index()
+                    cls.build_index()
                 except elasticsearch.exceptions.RequestError:
                     errors.append(
                         Fore.RED +
-                        f'Exception on build index for {model.__name__}'
+                        f'Exception on build index for {model}'
                     )
                 pbar.update()
 
