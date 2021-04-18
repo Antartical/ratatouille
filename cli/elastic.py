@@ -32,6 +32,9 @@ async def build(models: str = ''):
                 )
                 pbar.update()
                 continue
+            if cls.Document._index.exists():
+                pbar.update()
+                continue
             cls.build_index()
             pbar.update()
 
