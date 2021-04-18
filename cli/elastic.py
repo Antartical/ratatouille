@@ -1,6 +1,7 @@
 """Elastisearch commands cli."""
 
 import typer
+import elasticsearch
 from tqdm import tqdm
 from colorama import Fore
 
@@ -21,6 +22,7 @@ async def build(models: str = ''):
         models = models.split(',')
 
     errors = []
+    retries = []
 
     with tqdm(total=len(models)) as pbar:
         pbar.set_description(Fore.GREEN + 'Build indexes')
@@ -28,18 +30,41 @@ async def build(models: str = ''):
             cls = getattr(ratatouille_models, model, None)
             if not cls or not getattr(cls, 'Document', None):
                 errors.append(
-                    Fore.YELLOW + f"Model {model} does not exists."
+                    Fore.YELLOW + f'Model {model} does not exists.'
                 )
                 pbar.update()
                 continue
             if cls.Document._index.exists():
                 pbar.update()
                 continue
-            cls.build_index()
+            try:
+                cls.build_index()
+            except elasticsearch.exceptions.RequestError:
+                errors.append(
+                    Fore.YELLOW + f'Exception on build index for {model}'
+                )
+                retries.append[cls]
             pbar.update()
 
     for error in errors:
         typer.echo(error)
+
+    if retries:
+        errors = []
+        with tqdm(total=len(models)) as pbar:
+            pbar.set_description(Fore.GREEN + 'Retrying build failed indexes')
+            for model in retries:
+                try:
+                    model.build_index()
+                except elasticsearch.exceptions.RequestError:
+                    errors.append(
+                        Fore.RED +
+                        f'Exception on build index for {model.__name__}'
+                    )
+                pbar.update()
+
+        for error in errors:
+            typer.echo(error)
 
 
 @app.command()
