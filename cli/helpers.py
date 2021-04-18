@@ -7,15 +7,6 @@ from tortoise import Tortoise
 from ratatouille import settings
 
 
-def coro(f):
-    """Coroutine command."""
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs), debug=False)
-
-    return wrapper
-
-
 def with_initialize_connections(f):
     """Initialize and stop db connections."""
     @wraps(f)
