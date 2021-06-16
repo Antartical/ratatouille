@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import typing
 import unittest
@@ -7,6 +9,7 @@ import elasticsearch_dsl
 from functools import partial, wraps
 from fastapi.testclient import TestClient
 from pytest_httpx import HTTPXMock
+from tortoise import models
 
 from ratatouille import settings
 from ratatouille.asgi import app
@@ -49,6 +52,17 @@ class AsyncRatatouilleTestCase(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         await tortoise.Tortoise.close_connections()
+
+
+class AsyncAbstractModelTestCase(AsyncRatatouilleTestCase):
+
+    Model: models.Model
+
+    async def get_model(self) -> models.Model:
+        with unittest.mock.patch.object(self.Model._meta, 'basequery'):
+            self.Model.filter = unittest.mock.MagicMock()
+            model = await self.Model.create()
+        return model
 
 
 class AsyncAPITestCase(AsyncRatatouilleTestCase):

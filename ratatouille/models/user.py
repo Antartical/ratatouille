@@ -1,9 +1,8 @@
 import typing
-import elasticsearch_dsl
 from tortoise import fields
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from ratatouille.common import models
+from ratatouille.common import models, elastic
 
 
 class User(models.UUIDTimestampedModel, models.IndexedModel):
@@ -15,11 +14,11 @@ class User(models.UUIDTimestampedModel, models.IndexedModel):
     birthday = fields.DateField()
     phone = fields.CharField(max_length=50)
 
-    class Document(elasticsearch_dsl.Document):
-        id = elasticsearch_dsl.Keyword()
-        uuid = elasticsearch_dsl.Keyword()
-        email = elasticsearch_dsl.Keyword()
-        name = elasticsearch_dsl.Text()
+    class Document(elastic.Document):
+        id = elastic.fields.Keyword()
+        uuid = elastic.fields.Keyword()
+        email = elastic.fields.Keyword()
+        name = elastic.fields.Text()
 
         class Index:
             name = 'user'

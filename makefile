@@ -72,4 +72,7 @@ renew: local.down local.build local.start
 
 ci_check_tests:ci.docker.login local.start ci.test
 
+update_dependencies:
+	@docker exec -it ratatouille poetry update
+
 .PHONY:  start stop renew sh logs docker_tag_and_push
