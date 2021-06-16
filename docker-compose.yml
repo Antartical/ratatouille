@@ -129,6 +129,7 @@ services:
       - ./aerich.ini:/app/aerich.ini
       - ./migrations:/app/migrations
       - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
       - ./manage.py:/app/manage.py
     ports:
       - "9400:9400"
