@@ -4,6 +4,9 @@ import elasticsearch_dsl
 
 MODEL = typing.TypeVar("MODEL", bound="Model")
 
+Document = elasticsearch_dsl.Document
+fields = elasticsearch_dsl
+
 
 class ESIndex:
     """Baseclass for indexed models."""
@@ -94,6 +97,7 @@ class ESIndex:
         Returns:
           str: the id index of the indexed document
         """
+
         if doc := self._get_doc_instance:
             doc.update(**self.to_document)
         else:

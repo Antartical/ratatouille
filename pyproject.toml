@@ -44,4 +44,4 @@ addopts = "-s"
 source = ["./ratatouille/", "/app/ratatouille/"]
 
 [tool.coverage.run]
-omit = ["./ratatouille/controllers/openapi.py", "./ratatouille/models/factories/*.py"]
+omit = ["./ratatouille/controllers/openapi.py", "./ratatouille/models/factories/*.py", "*tests/*"]
