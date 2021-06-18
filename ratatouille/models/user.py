@@ -2,7 +2,7 @@ import typing
 from tortoise import fields
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from ratatouille.common import models, elastic
+from ratatouille.core import models, elastic
 
 
 class User(models.UUIDTimestampedModel, models.IndexedModel):

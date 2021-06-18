@@ -1,4 +1,4 @@
-from ratatouille.common.test import AsyncRatatouilleTestCase
+from ratatouille.core.testing import AsyncRatatouilleTestCase
 from ratatouille.security.permissions import helpers
 
 

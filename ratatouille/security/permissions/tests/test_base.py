@@ -1,7 +1,7 @@
 from unittest import mock
 from fastapi import HTTPException
 
-from ratatouille.common.test import AsyncRatatouilleTestCase
+from ratatouille.core.testing import AsyncRatatouilleTestCase
 from ratatouille.security.permissions import base
 
 

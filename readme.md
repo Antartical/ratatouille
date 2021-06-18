@@ -28,6 +28,7 @@ Moreover you can perform the following operations:
 - **make sh**: attach a console inside ratatouille.
 - **make logs**: shows ratatouille logs
 - **make local.build**: recompiles ratatouille image
+- **make dependencies.upgrade**: upgrade all dependencies
 
 ## Configure pre-commit (Python3 required)
 

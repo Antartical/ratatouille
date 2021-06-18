@@ -1,5 +1,5 @@
 from unittest import mock, TestCase
-from ratatouille.common import elastic
+from ratatouille.core import elastic
 
 
 class ElasticTest(TestCase):
@@ -20,7 +20,7 @@ class ElasticTest(TestCase):
         query_type = 'query_string'
 
         with mock.patch(
-            'ratatouille.common.elastic.ESIndex._search', autospec=True
+            'ratatouille.core.elastic.ESIndex._search', autospec=True
         ) as mock_search:
             mock_index.es_search(query)
             mock_search.assert_called_once()
@@ -35,7 +35,7 @@ class ElasticTest(TestCase):
         query_type = 'match'
 
         with mock.patch(
-            'ratatouille.common.elastic.ESIndex._search',
+            'ratatouille.core.elastic.ESIndex._search',
             autospec=True
         ) as mock_search:
             mock_index.es_match(attr, query)
@@ -73,7 +73,7 @@ class ElasticTest(TestCase):
         mock_index._index_id = None
 
         with mock.patch(
-            'ratatouille.common.elastic.ESIndex.to_document',
+            'ratatouille.core.elastic.ESIndex.to_document',
             return_value=mock_to_document
         ):
             mock_index.index()
@@ -86,11 +86,11 @@ class ElasticTest(TestCase):
         mock_index = self.MockESIndex()
 
         with mock.patch(
-            'ratatouille.common.elastic.ESIndex.to_document',
+            'ratatouille.core.elastic.ESIndex.to_document',
             return_value=mock_to_document
         ), \
             mock.patch(
-            'ratatouille.common.elastic.ESIndex._get_doc_instance'
+            'ratatouille.core.elastic.ESIndex._get_doc_instance'
         ) as mock_doc_instance:
             mock_index.index()
             mock_doc_instance.update.assert_called_once()
@@ -99,7 +99,7 @@ class ElasticTest(TestCase):
         mock_index = self.MockESIndex()
 
         with mock.patch(
-            'ratatouille.common.elastic.ESIndex._get_doc_instance'
+            'ratatouille.core.elastic.ESIndex._get_doc_instance'
         ) as mock_doc_instance:
             mock_index.unindex()
             mock_doc_instance.delete.assert_called_once()

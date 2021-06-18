@@ -1,10 +1,10 @@
-from ratatouille.common import test
+from ratatouille.core import testing
 from ratatouille.models.factories import user_factories
 
 
-class UserModelTest(test.AsyncRatatouilleTestCase):
+class UserModelTest(testing.AsyncRatatouilleTestCase):
 
-    @test.db_test
+    @testing.db_test
     async def test_to_document(self):
         user = await user_factories.user_factory()
         expected_response = {

@@ -1,8 +1,8 @@
 from unittest import mock
-from ratatouille.common import test, models
+from ratatouille.core import testing, models
 
 
-class IndexedModelTest(test.AsyncAbstractModelTestCase):
+class IndexedModelTest(testing.AsyncAbstractModelTestCase):
 
     class Model(models.IndexedModel):
         id = 1
