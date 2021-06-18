@@ -1,4 +1,4 @@
-from ratatouille.common.test import AsyncAPITestCase
+from ratatouille.core.testing import AsyncAPITestCase
 
 
 class TestPingRoute(AsyncAPITestCase):

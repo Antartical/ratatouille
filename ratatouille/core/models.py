@@ -1,4 +1,4 @@
-"""This module contains common abstract models.
+"""This module contains core abstract models.
 
 All of those are compatible with Tortoise ORM
 """
@@ -12,7 +12,7 @@ from tortoise import fields, models
 from tortoise.queryset import QuerySet
 
 
-from ratatouille.common.elastic import ESIndex
+from ratatouille.core.elastic import ESIndex
 
 
 logger = logging.getLogger(__name__)
